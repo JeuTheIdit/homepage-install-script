@@ -76,7 +76,7 @@ msg_info "Updating system packages..."
 apt update && apt upgrade -y
 
 # Install pnpm globally
-msg_info "Installing pnpm..."
+msg_info "Installing or updating pnpm..."
 npm install -g pnpm
 
 msg_info "Installing ${APP} v${RELEASE}"
@@ -134,7 +134,7 @@ if [ "$NEW_INSTALLATION" = true ]; then
     
     # Create systemd service only for new installations
     msg_info "Creating systemd service..."
-    cat <<EOF >/etc/systemd/system/homepage.service
+    cat <<EOF >/etc/systemd/system/${APP}.service
     [Unit]
     Description=${APP}  
     After=network.target
