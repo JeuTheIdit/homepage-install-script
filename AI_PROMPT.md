@@ -15,8 +15,8 @@ This script automates the installation or update of Homepage, a self-hosted star
 
 ## Directories
 - Installation: `/opt/homepage`
-- Homepage configuration: `/opt/homepage/config`
-- Download: `/tmp`
+- Working (cleaned after installation): `/tmp`
+- Configuration: `/opt/homepage/config`
 
 ## Script summary
 1. Set initial variables
