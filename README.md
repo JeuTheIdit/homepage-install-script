@@ -11,7 +11,7 @@ The following packages are installed:
 - curl
 
 ```bash
-sudo apt install curl node.js npm
+sudo apt install curl nodejs npm
 ```
 
 ## Usage
