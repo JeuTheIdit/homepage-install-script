@@ -20,6 +20,7 @@ APP=$(hostname)
 LOCAL_IP=$(hostname -I | awk '{print $1}')
 RELEASE=$(curl -fsSL "https://api.github.com/repos/gethomepage/homepage/releases/latest" | grep -o '"tag_name": "[^"]*"' | cut -d'"' -f4 | sed 's/^v//')
 VERSION_FILE="/opt/${APP}_version.txt"
+DOMAIN="home.jnbolsen.com"
 
 # Validate
 [ -z $APP ] && msg_error "Could not fetch hostname." && exit 1
@@ -62,7 +63,7 @@ if [ $NEW_INSTALLATION = true ]; then
     
     # Create environment file
     msg_ok "Creating environment variable file..."
-    echo "HOMEPAGE_ALLOWED_HOSTS=localhost:3000,${LOCAL_IP}:3000,${APP}.home.jnbolsen.com:3000" > /opt/${APP}/.env
+    echo "HOMEPAGE_ALLOWED_HOSTS=localhost:3000,${LOCAL_IP}:3000,${APP}.${DOMAIN}" > /opt/${APP}/.env
     
     # Create systemd service
     msg_ok "Creating systemd service..."
