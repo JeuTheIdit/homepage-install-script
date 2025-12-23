@@ -1,4 +1,4 @@
-# Homepage install and update scripts
+# Homepage install and update script
 This script installs [Homepage](https://gethomepage.dev/installation/) from source or updates it if already installed and a newer version is available.
 
 > [!NOTE]
