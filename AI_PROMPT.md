@@ -10,14 +10,13 @@ This script automates the installation or update of Homepage, a self-hosted star
 - `RELEASE`: Latest Github release tag for Homepage
 - `VERSION_FILE`: Path to file storing the currently installed version
 - `DOMAIN`: Internal network domain, if available
-- `INSTALLED_VERSION`: Current version read from `VERSION_FILE`
+- `INSTALLED_VERSION`: Current version (if installed), read from `VERSION_FILE`
 - `NEW_INSTALLATION`: Boolean flag indicating if this is a new install
 
 ## Directories
 - Installation: `/opt/homepage`
 - Homepage configuration: `/opt/homepage/config`
 - Download: `/tmp`
-- `VERSION_FILE` location: `/opt`
 
 ## Script summary
 1. Set initial variables
@@ -25,36 +24,35 @@ This script automates the installation or update of Homepage, a self-hosted star
 2. Validation checks
    - Ensure `RELEASE` and `LOCAL_IP` are valid.
    - Check that script runs as root.
-   - Confirm `curl` and `npm` are installed.
+   - Confirm curl, node.js, and npm are installed.
 3. Determine installation type
    - If `VERSION_FILE` does not exist → new installation.
-   - If `VERSION_FILE` exists but doesn't match `RELEASE` → update.
-   - If version matches → exit (no action needed).
+   - If `VERSION_FILE` exists but `INSTALLED_VERSION` doesn't match `RELEASE` → update.
+   - If `INSTALLED_VERSION` matches `RELEASE` → exit (no action needed).
 4. System preparation
-   - Update system packages.
-   - Upgrade `pnpm` (install if missing).
+   - Update and upgrade system packages.
+   - Install or upgrade pnpm.
 5. Download and extract source
-   - Download latest release tarball using GitHub API.
-   - Extract into `/tmp`.
-6. Copy files to install directory
-   - Move extracted source to `/opt/homepage`.
-7. Cleanup
-   - Remove temporary files in `/tmp`.
-8. New installation steps only
-   - Copy skeleton config files from `src/skeleton` to `/opt/APP/config`.
-   - Create `.env` file with `HOMEPAGE_ALLOWED_HOSTS` variable, which adds `LOCAL_IP:3000` and `APP.DOMAIN:3000`.
+   - Download latest release tarball using GitHub API into `/tmp`.
+   - Extract.
+6. Copy files to install directory and clean up
+   - Copy extracted source to `/opt/homepage`.
+   - Remove download and extracted files in `/tmp`.
+7. New installation steps only
+   - Copy default config files from `src/skeleton` to `/opt/APP/config`.
+   - Create `.env` file with `HOMEPAGE_ALLOWED_HOSTS` variable, which adds `localhost:3000`, `LOCAL_IP:3000`, and `APP.DOMAIN:3000`.
    - Set up systemd service file.
-9. Build & install dependencies
+8. Build & install dependencies
    - Run `pnpm install`.
    - Run `pnpm build`.
-10. Finalize
-    - Write new version to `VERSION_FILE`.
-    - For new installs:
-      - Reload systemd daemon.
-      - Enable the service.
-      - Start the service.
-    - For updates:
-      - Restart the service only.
+9. Finalize
+   - Write new version to `VERSION_FILE`.
+   - For new installs:
+     - Reload systemd daemon.
+     - Enable the service.
+     - Start the service.
+   - For updates:
+     - Restart the service only.
 
 ## Key features implemented
 - Idempotent behavior: Won't reinstall if already up-to-date.
