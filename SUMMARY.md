@@ -9,10 +9,11 @@ This script automates the installation or update of Homepage, a self-hosted star
 
 ## Variables used
 - `APP`: Name of the application (homepage)
+- `HOSTNAME`: Hostname of the machine
 - `LOCAL_IP`: Local IPv4 address of the machine
 - `RELEASE`: Latest Github release tag for Homepage
 - `VERSION_FILE`: Path to file storing the currently installed version
-- `DOMAIN`: Internal network domain, if available
+- `DOMAIN`: Internal network domain, if provided. User input during script execution.
 - `INSTALLED_VERSION`: Current version (if installed), read from `VERSION_FILE`
 - `NEW_INSTALLATION`: Boolean flag indicating if this is a new install
 
@@ -23,13 +24,14 @@ This script automates the installation or update of Homepage, a self-hosted star
 
 ## Script summary
 1. Set initial variables
-   - `APP`, `LOCAL_IP`, `RELEASE`, `VERSION_FILE`, and `DOMAIN`.
+   - `APP`, `HOSTNAME`, `LOCAL_IP`, `RELEASE`, `VERSION_FILE`, and `DOMAIN`.
 2. Validation checks
-   - Ensure `RELEASE` and `LOCAL_IP` are valid.
+   - Ensure `HOSTNAME`, `RELEASE` and `LOCAL_IP` are valid.
    - Check that script runs as root.
    - Confirm curl, node.js, and npm are installed.
 3. Determine installation type
    - If `VERSION_FILE` does not exist → new installation.
+     - Ask user to enter internal domain name, variable `DOMAIN`, if desired.
    - If `VERSION_FILE` exists but `INSTALLED_VERSION` doesn't match `RELEASE` → update.
    - If `INSTALLED_VERSION` matches `RELEASE` → exit (no action needed).
 4. System preparation
@@ -43,7 +45,9 @@ This script automates the installation or update of Homepage, a self-hosted star
    - Remove download and extracted files in `/tmp`.
 7. New installation steps only
    - Copy default config files from `src/skeleton` to `/opt/APP/config`.
-   - Create `.env` file with `HOMEPAGE_ALLOWED_HOSTS` variable, which adds `localhost:3000`, `LOCAL_IP:3000`, and `APP.DOMAIN:3000`.
+   - Create `.env` file with `HOMEPAGE_ALLOWED_HOSTS` variable.
+     - If `DOMAIN` was not provided → adds `localhost:3000` and `LOCAL_IP:3000`.
+     - If `DOMAIN` was provided → adds `localhost:3000`, `LOCAL_IP:3000`, and `HOSTNAME.DOMAIN:3000`.
    - Set up systemd service file.
 8. Build & install dependencies
    - Run `pnpm install`.
