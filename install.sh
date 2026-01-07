@@ -18,9 +18,14 @@ if [ "$EUID" -ne 0 ]; then
     exit 1
 fi
 
+# Logging setup
+LOGFILE="/var/log/ezarr.log"
+exec > >(tee -a "$LOGFILE") 2>&1
+
 # Variables
 APP=homepage
 HOSTNAME=$(hostname)
+DOMAIN=$(hostname -f | sed 's/^[^.]*\.//')
 LOCAL_IP=$(hostname -I | awk '{print $1}')
 RELEASE=$(curl -fsSL "https://api.github.com/repos/gethomepage/homepage/releases/latest" | grep -o '"tag_name": "[^"]*"' | cut -d'"' -f4 | sed 's/^v//')
 VERSION_FILE="/opt/${APP}_version.txt"
@@ -44,11 +49,6 @@ else
     NEW_INSTALLATION=true
     msg_info "No Homepage installation detected. Installing..."
     mkdir -p /opt/${APP}/config
-
-    # Prompt user for domain input
-    msg_info "Please enter your internal network domain (or press Enter to skip):"
-    read -r DOMAIN_INPUT
-    DOMAIN="$DOMAIN_INPUT"
 fi
 
 # Update system and install pnpm
